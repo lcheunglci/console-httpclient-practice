@@ -1,6 +1,7 @@
 ﻿using Movies.Client.Models;
 using System;
 using System.Collections.Generic;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -15,6 +16,9 @@ namespace Movies.Client.Services
         {
             _httpClient.BaseAddress = new Uri("http://localhost:57863");
             _httpClient.Timeout = new TimeSpan(0, 0, 30);
+            _httpClient.DefaultRequestHeaders.Clear();
+            _httpClient.DefaultRequestHeaders.Accept.Add(
+                new MediaTypeWithQualityHeaderValue("application/json"));
         }
 
         public async Task Run()
