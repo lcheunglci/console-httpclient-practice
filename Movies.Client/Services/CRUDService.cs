@@ -1,10 +1,6 @@
 ﻿using Movies.Client.Models;
-using System;
-using System.Collections.Generic;
 using System.Net.Http.Headers;
-using System.Text;
 using System.Text.Json;
-using System.Threading.Tasks;
 using System.Xml.Serialization;
 
 namespace Movies.Client.Services
@@ -27,7 +23,8 @@ namespace Movies.Client.Services
         public async Task Run()
         {
             // await GetResource();
-            await GetResourceThroughHttpRequestMessage();
+            // await GetResourceThroughHttpRequestMessage();
+            await CreateResource();
         }
 
         public async Task GetResource()
@@ -74,9 +71,40 @@ namespace Movies.Client.Services
                 {
                     PropertyNamingPolicy = JsonNamingPolicy.CamelCase
                 });
-
-
-            
         }
+
+        public async Task CreateResource()
+        {
+            var movieToCreate = new MovieForCreation()
+            {
+                Title = "Reservoir Dogs",
+                Description = "After a simple jewlry heist goes therribly wrong, the " +
+                    "surviving criminals begin to susept that one of them is a police informant.",
+                DirectorId = Guid.Parse("d28888e9-2ba9-437a-a40f-e38cb54f9b35"),
+                ReleaseDate = new DateTimeOffset(new DateTime(1992, 9, 2)),
+                Genre = "Crime, Drama"
+            };
+
+            var serializeMovieToCreate = JsonSerializer.Serialize(movieToCreate);
+
+            var request = new HttpRequestMessage(HttpMethod.Post, "api/movies");
+            request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+            request.Content = new StringContent(serializeMovieToCreate);
+            request.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+
+            var response = await _httpClient.SendAsync(request);
+            response.EnsureSuccessStatusCode();
+
+            var content = await response.Content.ReadAsStringAsync();
+
+            var createdMovie = JsonSerializer.Deserialize<Movie>(content,
+                new JsonSerializerOptions
+                {
+                    PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+                });
+
+        }
+
     }
 }
