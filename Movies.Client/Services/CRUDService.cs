@@ -25,7 +25,8 @@ namespace Movies.Client.Services
             // await GetResource();
             // await GetResourceThroughHttpRequestMessage();
             // await CreateResource();
-            await UpdateResource();
+            // await UpdateResource();
+            await DeleteResource();
         }
 
         public async Task GetResource()
@@ -137,6 +138,18 @@ namespace Movies.Client.Services
                     PropertyNamingPolicy = JsonNamingPolicy.CamelCase
                 });
 
+        }
+
+        public async Task DeleteResource()
+        {
+            var request = new HttpRequestMessage(HttpMethod.Delete,
+                "api/movies/api/movies/5b1c2b4d-48c7-402a-80c3-cc796ad49c6b");
+            request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+            var response = await _httpClient.SendAsync(request);
+            response.EnsureSuccessStatusCode();
+
+            var content = await response.Content.ReadAsStringAsync();
         }
 
     }
