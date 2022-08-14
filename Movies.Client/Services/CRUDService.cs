@@ -1,5 +1,6 @@
 ﻿using Movies.Client.Models;
 using System.Net.Http.Headers;
+using System.Text;
 using System.Text.Json;
 using System.Xml.Serialization;
 
@@ -147,6 +148,69 @@ namespace Movies.Client.Services
             request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
             var response = await _httpClient.SendAsync(request);
+            response.EnsureSuccessStatusCode();
+
+            var content = await response.Content.ReadAsStringAsync();
+        }
+
+        public async Task PostResourceShortcut()
+        {
+            var movieToCreate = new MovieForCreation()
+            {
+                Title = "Reservoir Dogs",
+                Description = "After a simple jewlry heist goes therribly wrong, the " +
+                    "surviving criminals begin to susept that one of them is a police informant.",
+                DirectorId = Guid.Parse("d28888e9-2ba9-437a-a40f-e38cb54f9b35"),
+                ReleaseDate = new DateTimeOffset(new DateTime(1992, 9, 2)),
+                Genre = "Crime, Drama"
+            };
+
+            var response = await _httpClient.PostAsync(
+                "api/movies",
+                new StringContent(JsonSerializer.Serialize(movieToCreate), Encoding.UTF8, "application/json"));
+
+            response.EnsureSuccessStatusCode();
+
+            var content = await response.Content.ReadAsStringAsync();
+
+            var createdMovie = JsonSerializer.Deserialize<Movie>(content,
+                new JsonSerializerOptions
+                {
+                    PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+                });
+
+        }
+
+        public async Task PutResourceShortcut()
+        {
+            var movieToUpdate = new MovieForUpdate()
+            {
+                Title = "Pulp Fiction",
+                Description = "The movie with Zed",
+                DirectorId = Guid.Parse("d28888e9-2ba9-437a-a40f-e38cb54f9b35"),
+                ReleaseDate = new DateTimeOffset(new DateTime(1992, 9, 2)),
+                Genre = "Crime, Drama"
+            };
+
+
+            var response = await _httpClient.PutAsync(
+                "api/movies/5b1c2b4d-48c7-402a-80c3-cc796ad49c6b",
+                new StringContent(JsonSerializer.Serialize(movieToUpdate), Encoding.UTF8, "application/json"));
+
+            response.EnsureSuccessStatusCode();
+
+            var content = await response.Content.ReadAsStringAsync();
+
+            var updatedMovie = JsonSerializer.Deserialize<Movie>(content,
+                new JsonSerializerOptions
+                {
+                    PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+                });
+        }
+
+        public async Task DeleteResourceShortcut()
+        {
+            var response = await _httpClient.DeleteAsync("api/movies/api/movies/5b1c2b4d-48c7-402a-80c3-cc796ad49c6b")
             response.EnsureSuccessStatusCode();
 
             var content = await response.Content.ReadAsStringAsync();
