@@ -9,10 +9,13 @@ namespace Movies.Client.Services
         private readonly CancellationTokenSource _cancellationTokenSource =
             new CancellationTokenSource();
         private readonly IHttpClientFactory _httpClientFactory;
+        private readonly MoviesClient _moviesClient;
 
-        public HttpClientFactoryInstanceManagementService(IHttpClientFactory httpClientFactory)
+        public HttpClientFactoryInstanceManagementService(IHttpClientFactory httpClientFactory,
+            MoviesClient moviesClient)
         {
             _httpClientFactory = httpClientFactory ?? throw new ArgumentNullException(nameof(httpClientFactory));
+            this._moviesClient = moviesClient ?? throw new ArgumentNullException(nameof(moviesClient));
         }
 
         public async Task Run()
@@ -20,8 +23,8 @@ namespace Movies.Client.Services
             // await TestDisposeHttpClient(_cancellationTokenSource.Token);
             // await TestReuseHttpClient(_cancellationTokenSource.Token);
             // await GetMoviesWithHttpClientFromFactory(_cancellationTokenSource.Token);
-            await GetMoviesWithNamedHttpClientFromFactory(_cancellationTokenSource.Token);
-
+            // await GetMoviesWithNamedHttpClientFromFactory(_cancellationTokenSource.Token);
+            await GetMoviesWithTypedHttpClientFromFactory(_cancellationTokenSource.Token);
         }
 
         private async Task GetMoviesWithHttpClientFromFactory(CancellationToken cancellationToken)
@@ -61,6 +64,22 @@ namespace Movies.Client.Services
             }
         }
 
+        private async Task GetMoviesWithTypedHttpClientFromFactory(CancellationToken cancellationToken)
+        {
+            var request = new HttpRequestMessage(
+                HttpMethod.Get,
+                "api/movies");
+            request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            request.Headers.AcceptEncoding.Add(new StringWithQualityHeaderValue("gzip"));
+
+            using (var response = await _moviesClient.Client.SendAsync(request,
+                    HttpCompletionOption.ResponseHeadersRead, cancellationToken))
+            {
+                var stream = await response.Content.ReadAsStreamAsync();
+                response.EnsureSuccessStatusCode();
+                var movies = stream.ReadAndDeserializeFromJson<List<Movie>>();
+            }
+        }
 
         // run admin cmd netstat -abn
         // when the connection is dispose it may remain in this time_wait state for up to 240 seconds, and can lead to socket exhaustion
