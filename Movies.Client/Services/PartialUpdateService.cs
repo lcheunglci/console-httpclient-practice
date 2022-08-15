@@ -3,6 +3,7 @@ using Movies.Client.Models;
 using Newtonsoft.Json;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Text;
 
 namespace Movies.Client.Services
 {
@@ -19,7 +20,8 @@ namespace Movies.Client.Services
 
         public async Task Run()
         {
-            await PatchResource();
+            // await PatchResource();
+            await PatchResourceShortcut();
 
         }
 
@@ -43,6 +45,25 @@ namespace Movies.Client.Services
             var content = await response.Content.ReadAsStringAsync();
             var updatedMovie = JsonConvert.DeserializeObject<Movie>(content);
 
+        }
+
+        public async Task PatchResourceShortcut()
+        {
+            var patchDoc = new JsonPatchDocument<MovieForUpdate>();
+            patchDoc.Replace(m => m.Title, "Updated title");
+            patchDoc.Remove(m => m.Description);
+
+            var response = await _httpClient.PatchAsync(
+                "api/movies/api/movies/5b1c2b4d-48c7-402a-80c3-cc796ad49c6b",
+                new StringContent(
+                    JsonConvert.SerializeObject(patchDoc),
+                    Encoding.UTF8,
+                    "application/json-patch+json"));
+
+            response.EnsureSuccessStatusCode();
+
+            var content = await response.Content.ReadAsStringAsync();
+            var updatedMovie = JsonConvert.DeserializeObject<Movie>(content);
         }
     }
 }
