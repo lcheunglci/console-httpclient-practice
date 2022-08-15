@@ -37,19 +37,26 @@ namespace Movies.Client.Services
             request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
             request.Headers.AcceptEncoding.Add(new StringWithQualityHeaderValue("gzip"));
 
-            
-
-            using (var response = await _httpClient.SendAsync(request,
-                HttpCompletionOption.ResponseHeadersRead,
-                cancellationToken))
+            try
             {
-                using (var stream = await response.Content.ReadAsStreamAsync())
+                using (var response = await _httpClient.SendAsync(request,
+                    HttpCompletionOption.ResponseHeadersRead,
+                    cancellationToken))
                 {
-                    response.EnsureSuccessStatusCode();
+                    using (var stream = await response.Content.ReadAsStreamAsync())
+                    {
+                        response.EnsureSuccessStatusCode();
 
-                    var poster = stream.ReadAndDeserializeFromJson<Trailer>();
+                        var poster = stream.ReadAndDeserializeFromJson<Trailer>();
+                    }
                 }
             }
+            catch (OperationCanceledException ocException)
+            {
+                Console.WriteLine($"An operation cancelled with message {ocException.Message}.");
+                // additional cleanup, ...
+            }
+
         }
 
     }
