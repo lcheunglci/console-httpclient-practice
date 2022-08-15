@@ -1,6 +1,8 @@
 ﻿using Marvin.StreamExtensions;
 using Movies.Client.Models;
+using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Text.Json;
 
 namespace Movies.Client.Services
 {
@@ -19,7 +21,8 @@ namespace Movies.Client.Services
 
         public async Task Run()
         {
-            await GetMovieAndDealWithInvalidResponse(_cancellationTokenSource.Token);
+            // await GetMovieAndDealWithInvalidResponse(_cancellationTokenSource.Token);
+            await PostMovieAndHandleValidationErrors(_cancellationTokenSource.Token);
         }
 
         private async Task GetMovieAndDealWithInvalidResponse(CancellationToken cancellationToken)
@@ -58,5 +61,52 @@ namespace Movies.Client.Services
                 var movies = stream.ReadAndDeserializeFromJson<Movie>();
             }
         }
+
+        public async Task PostMovieAndHandleValidationErrors(CancellationToken cancellationToken)
+        {
+            var httpClient = _httpClientFactory.CreateClient("MoviesClient");
+            var movieToCreate = new MovieForCreation()
+            {
+                Title = "Pulp FIction"
+            };
+
+            var serializeMovieToCreate = JsonSerializer.Serialize(movieToCreate);
+
+            var request = new HttpRequestMessage(HttpMethod.Post, "api/movies");
+            request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            request.Headers.AcceptEncoding.Add(new StringWithQualityHeaderValue("gzip"));
+
+            request.Content = new StringContent(serializeMovieToCreate);
+            request.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+
+            var response = await httpClient.SendAsync(request,
+                HttpCompletionOption.ResponseHeadersRead,
+                cancellationToken);
+
+            var stream = await response.Content.ReadAsStreamAsync();
+
+            if (!response.IsSuccessStatusCode)
+            {
+                // inspect the status code
+                if (response.StatusCode == System.Net.HttpStatusCode.UnprocessableEntity)
+                {
+                    // read out the respnse body and log it into the console window
+                    var validationErrors = stream.ReadAndDeserializeFromJson();
+                    Console.WriteLine(validationErrors);
+                    return;
+                }
+                else if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+                {
+                    // trigger a login flow
+                    return;
+                }
+
+                response.EnsureSuccessStatusCode();
+            }
+
+            var movie = stream.ReadAndDeserializeFromJson<Movie>();
+        }
+
+
     }
 }
