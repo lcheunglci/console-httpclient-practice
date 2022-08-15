@@ -47,8 +47,10 @@ namespace Movies.Client
 
         private static void ConfigureServices(IServiceCollection serviceCollection)
         {
-            // add loggers           
+            // add loggers
             serviceCollection.AddLogging(configure => configure.AddDebug().AddConsole());
+
+            serviceCollection.AddHttpClient();
 
             // register the integration service on our container with a 
             // scoped lifetime
