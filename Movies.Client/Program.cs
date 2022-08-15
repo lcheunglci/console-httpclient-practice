@@ -55,7 +55,10 @@ namespace Movies.Client
                 client.BaseAddress = new Uri("http://localhost:57863");
                 client.Timeout = new TimeSpan(0, 0, 30);
                 client.DefaultRequestHeaders.Clear();
-            }).AddHttpMessageHandler(handler => new RetryPolicyDelegatingHandler(2)
+            }).AddHttpMessageHandler(hander =>
+                new TimeOutDelegatingHandler(TimeSpan.FromSeconds(20))
+            ).AddHttpMessageHandler(handler =>
+                new RetryPolicyDelegatingHandler(2)
             ).ConfigurePrimaryHttpMessageHandler(handler =>
                 new HttpClientHandler()
                 {

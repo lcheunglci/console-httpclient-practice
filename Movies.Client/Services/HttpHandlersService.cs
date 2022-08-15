@@ -66,5 +66,7 @@ namespace Movies.Client.Services
                 var movies = stream.ReadAndDeserializeFromJson<Movie>();
             }
         }
+
+
     }
 }

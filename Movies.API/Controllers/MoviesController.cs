@@ -35,6 +35,9 @@ namespace Movies.API.Controllers
         [HttpGet("{movieId}", Name = "GetMovie")]
         public async Task<ActionResult<Models.Movie>> GetMovie(Guid movieId)
         {
+            // for testing the timeout delegating handler
+            // await Task.Delay(30000);
+
             var movieEntity = await _moviesRepository.GetMovieAsync(movieId);
             if (movieEntity == null)
             {
