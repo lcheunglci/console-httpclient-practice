@@ -24,7 +24,8 @@ namespace Movies.Client.Services
             // await TestReuseHttpClient(_cancellationTokenSource.Token);
             // await GetMoviesWithHttpClientFromFactory(_cancellationTokenSource.Token);
             // await GetMoviesWithNamedHttpClientFromFactory(_cancellationTokenSource.Token);
-            await GetMoviesWithTypedHttpClientFromFactory(_cancellationTokenSource.Token);
+            // await GetMoviesWithTypedHttpClientFromFactory(_cancellationTokenSource.Token);
+            await GetMoviesViaMoviesClient(_cancellationTokenSource.Token);
         }
 
         private async Task GetMoviesWithHttpClientFromFactory(CancellationToken cancellationToken)
@@ -64,21 +65,26 @@ namespace Movies.Client.Services
             }
         }
 
-        private async Task GetMoviesWithTypedHttpClientFromFactory(CancellationToken cancellationToken)
-        {
-            var request = new HttpRequestMessage(
-                HttpMethod.Get,
-                "api/movies");
-            request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-            request.Headers.AcceptEncoding.Add(new StringWithQualityHeaderValue("gzip"));
+        //private async Task GetMoviesWithTypedHttpClientFromFactory(CancellationToken cancellationToken)
+        //{
+        //    var request = new HttpRequestMessage(
+        //        HttpMethod.Get,
+        //        "api/movies");
+        //    request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+        //    request.Headers.AcceptEncoding.Add(new StringWithQualityHeaderValue("gzip"));
 
-            using (var response = await _moviesClient.Client.SendAsync(request,
-                    HttpCompletionOption.ResponseHeadersRead, cancellationToken))
-            {
-                var stream = await response.Content.ReadAsStreamAsync();
-                response.EnsureSuccessStatusCode();
-                var movies = stream.ReadAndDeserializeFromJson<List<Movie>>();
-            }
+        //    using (var response = await _moviesClient.Client.SendAsync(request,
+        //            HttpCompletionOption.ResponseHeadersRead, cancellationToken))
+        //    {
+        //        var stream = await response.Content.ReadAsStreamAsync();
+        //        response.EnsureSuccessStatusCode();
+        //        var movies = stream.ReadAndDeserializeFromJson<List<Movie>>();
+        //    }
+        //}
+
+        private async Task GetMoviesViaMoviesClient(CancellationToken cancellationToken)
+        {
+            var movies = await _moviesClient.GetMovies(cancellationToken);
         }
 
         // run admin cmd netstat -abn
