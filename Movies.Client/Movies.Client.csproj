@@ -8,6 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Marvin.StreamExtensions" Version="1.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.JsonPatch" Version="6.0.8" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="6.0.1" />
     <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="6.0.0" />

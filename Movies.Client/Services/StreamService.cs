@@ -1,4 +1,5 @@
-﻿using Movies.Client.Models;
+﻿using Marvin.StreamExtensions;
+using Movies.Client.Models;
 using Newtonsoft.Json;
 using System.Diagnostics;
 using System.Net.Http.Headers;
@@ -223,7 +224,8 @@ namespace Movies.Client.Services
 
             var memoryContentStream = new MemoryStream();
 
-            memoryContentStream.SerializeToJsonAndWrite(posterForCreation);
+            memoryContentStream.SerializeToJsonAndWrite(posterForCreation,
+                new UTF8Encoding(), 1024, true);
             memoryContentStream.Seek(0, SeekOrigin.Begin);
 
             using (var request = new HttpRequestMessage(HttpMethod.Post,
