@@ -2,6 +2,7 @@
 using Movies.Client.Models;
 using Newtonsoft.Json;
 using System.Net.Http.Headers;
+using System.Threading;
 
 namespace Movies.Client.Services
 {
@@ -19,14 +20,43 @@ namespace Movies.Client.Services
         public CancellationService()
         {
             _httpClient.BaseAddress = new Uri("http://localhost:57863");
-            _httpClient.Timeout = new TimeSpan(0, 0, 30);
+            _httpClient.Timeout = new TimeSpan(0, 0, 2);
             _httpClient.DefaultRequestHeaders.Clear();
         }
 
         public async Task Run()
         {
             _cancellationTokenSource.CancelAfter(1000);
-            await GetTrailerAndCancel(_cancellationTokenSource.Token);
+            // await GetTrailerAndCancel(_cancellationTokenSource.Token);
+            await GetTrailerAndHandleTimeout();
+        }
+
+        private async Task GetTrailerAndHandleTimeout()
+        {
+            var request = new HttpRequestMessage(
+                HttpMethod.Get,
+                $"api/movies/d8663e5e-7494-4f81-8739-6e0de1bea7ee/trailers/{Guid.NewGuid()}");
+            request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            request.Headers.AcceptEncoding.Add(new StringWithQualityHeaderValue("gzip"));
+
+            try
+            {
+                using (var response = await _httpClient.SendAsync(request,
+                    HttpCompletionOption.ResponseHeadersRead))
+                {
+                    using (var stream = await response.Content.ReadAsStreamAsync())
+                    {
+                        response.EnsureSuccessStatusCode();
+
+                        var poster = stream.ReadAndDeserializeFromJson<Trailer>();
+                    }
+                }
+            }
+            catch (OperationCanceledException ocException)
+            {
+                Console.WriteLine($"An operation cancelled with message {ocException.Message}.");
+                // additional cleanup, ...
+            }
         }
 
         private async Task GetTrailerAndCancel(CancellationToken cancellationToken)
