@@ -2,6 +2,7 @@
 using Newtonsoft.Json;
 using System.Diagnostics;
 using System.Net.Http.Headers;
+using System.Text;
 
 namespace Movies.Client.Services
 {
@@ -21,9 +22,10 @@ namespace Movies.Client.Services
         {
             // await GetPosterWithStream();
             // await GetPosterWithStreamAndCompletionMode();
-            await TestGetPosterWithoutStream();
-            await TestGetPosterWithStream();
-            await TestGetPosterWithStreamAndCompletionMode();
+            //await TestGetPosterWithoutStream();
+            //await TestGetPosterWithStream();
+            //await TestGetPosterWithStreamAndCompletionMode();
+            await PostPosterWithStream();
         }
 
         private async Task GetPosterWithStream()
@@ -152,6 +154,55 @@ namespace Movies.Client.Services
                 );
         }
 
+        private async Task PostPosterWithStream()
+        {
+            // generate a movie poster of 500KB
+            var random = new Random();
+            var generatedBytes = new byte[524288];
+            random.NextBytes(generatedBytes);
 
+            var posterForCreation = new PosterForCreation()
+            {
+                Name = "A new poster for the Big Lebowski",
+                Bytes = generatedBytes
+            };
+
+            // ==> JsonConvert.SerializeObject(posterForCreation);
+
+            var memoryContentStream = new MemoryStream();
+
+            //using (var streamWriter = 
+            //    new StreamWriter(memoryContentStream, new UTF8Encoding(), 1024, true))
+            //{
+            //    using (var jsonTextWriter = new JsonTextWriter(streamWriter))
+            //    {
+            //        var jsonSerializer = new JsonSerializer();
+            //        jsonSerializer.Serialize(jsonTextWriter, posterForCreation);
+            //        jsonTextWriter.Flush();
+            //    }
+            //}
+
+            memoryContentStream.SerializeToJsonAndWrite(posterForCreation);
+            memoryContentStream.Seek(0, SeekOrigin.Begin);
+
+            using (var request = new HttpRequestMessage(HttpMethod.Post,
+                $"api/movies/d8663e5e-7494-4f81-8739-6e0de1bea7ee/posters"))
+            {
+                request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                using (var streamContent = new StreamContent(memoryContentStream))
+                {
+                    streamContent.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+                    request.Content = streamContent;
+
+                    var response = await _httpClient.SendAsync(request);
+                    response.EnsureSuccessStatusCode();
+
+                    var createdContent = await response.Content.ReadAsStringAsync();
+                    var createdPoster = JsonConvert.DeserializeObject<Poster>(createdContent);
+
+                    // do something with the newly created poster.
+                }
+            }
+        }
     }
 }
