@@ -210,7 +210,7 @@ namespace Movies.Client.Services
 
         public async Task DeleteResourceShortcut()
         {
-            var response = await _httpClient.DeleteAsync("api/movies/api/movies/5b1c2b4d-48c7-402a-80c3-cc796ad49c6b")
+            var response = await _httpClient.DeleteAsync("api/movies/api/movies/5b1c2b4d-48c7-402a-80c3-cc796ad49c6b");
             response.EnsureSuccessStatusCode();
 
             var content = await response.Content.ReadAsStringAsync();
