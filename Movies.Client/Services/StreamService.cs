@@ -10,7 +10,11 @@ namespace Movies.Client.Services
     public class StreamService : IIntegrationService
     {
 
-        private static HttpClient _httpClient = new HttpClient();
+        private static HttpClient _httpClient = new HttpClient(
+            new HttpClientHandler()
+            {
+                AutomaticDecompression = System.Net.DecompressionMethods.GZip
+            });
 
         public StreamService()
         {
@@ -28,9 +32,10 @@ namespace Movies.Client.Services
             // await TestGetPosterWithStreamAndCompletionMode();
             // await PostPosterWithStream();
             // await PostAndReadPosterWithStream();
-            await TestPostPosterWithoutStream();
-            await TestPostPosterWithStream();
-            await TestPostAndReadPosterWithStream();
+            // await TestPostPosterWithoutStream();
+            // await TestPostPosterWithStream();
+            // await TestPostAndReadPosterWithStream();
+            await GetPosterWithGZipCompression();
         }
 
         private async Task GetPosterWithStream()
@@ -59,6 +64,25 @@ namespace Movies.Client.Services
                 //}
             }
         }
+
+        private async Task GetPosterWithGZipCompression()
+        {
+            var request = new HttpRequestMessage(
+                HttpMethod.Get,
+                $"api/movies/d8663e5e-7494-4f81-8739-6e0de1bea7ee/posters/{Guid.NewGuid()}");
+            request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            request.Headers.AcceptEncoding.Add(new StringWithQualityHeaderValue("gzip"));
+
+            var response = await _httpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead);
+            using (var stream = await response.Content.ReadAsStreamAsync())
+            {
+                response.EnsureSuccessStatusCode();
+
+                var poster = stream.ReadAndDeserializeFromJson<Poster>();
+            }
+        }
+
+
 
         private async Task GetPosterWithStreamAndCompletionMode()
         {
