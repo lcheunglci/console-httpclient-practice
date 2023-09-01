@@ -1,7 +1,13 @@
-﻿namespace Movies.Client.Services;
+﻿using Movies.Client.Models;
+using System.Text.Json;
+
+namespace Movies.Client.Services;
 
 public class CRUDSamples : IIntegrationService
 {
+    private readonly IHttpClientFactory _httpClientFactory;
+
+
     public Task RunAsync()
     {
         return GetResourceAsync();
