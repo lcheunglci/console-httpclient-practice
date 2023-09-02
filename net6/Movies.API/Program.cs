@@ -12,6 +12,9 @@ builder.Services.AddControllers(options =>
 {
     // Return a 406 when an unsupported media type was requested
     options.ReturnHttpNotAcceptable = true;
+
+    //options.OutputFormatter.Insert(0, new XmlSerializerOutputFormat());
+    //options.InputFormatter.Insert(0, new XmlSerializerInputFormatter(options));
 })
 // Override System.Text.Json with Json.NET
 //.AddNewtonsoftJson(setupAction =>
