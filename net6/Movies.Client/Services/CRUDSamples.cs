@@ -13,7 +13,8 @@ public class CRUDSamples : IIntegrationService
 
     public Task RunAsync()
     {
-        return GetResourceAsync();
+        // return GetResourceAsync();
+        return GetResourceThroughHttpRequestMessageAsync();
     }
 
     public async Task GetResourceAsync()
@@ -41,6 +42,30 @@ public class CRUDSamples : IIntegrationService
             var serializer = new XmlSerializer(typeof(List<Movie>));
             movies = serializer.Deserialize(new StringReader(content)) as List<Movie>;
         }
+
+    }
+
+    public async Task GetResourceThroughHttpRequestMessageAsync()
+    {
+        var httpClient = _httpClientFactory.CreateClient(); ;
+        httpClient.BaseAddress = new Uri("http://localhost:5001");
+        httpClient.Timeout = new TimeSpan(0, 0, 30);
+
+        var request = new HttpRequestMessage(HttpMethod.Get, "api/movies");
+        request.Headers.Accept.Add(
+            new MediaTypeWithQualityHeaderValue("application/json"));
+
+        var response = await httpClient.SendAsync(request);
+        response.EnsureSuccessStatusCode();
+
+        var content = await response.Content.ReadAsStringAsync();
+
+        var movies = JsonSerializer.Deserialize<IEnumerable<Movie>>(content,
+            new JsonSerializerOptions
+            {
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+            });
+
 
     }
 }
