@@ -23,7 +23,7 @@ public class CRUDSamples : IIntegrationService
         httpClient.Timeout = new TimeSpan(0, 0, 30);
         httpClient.DefaultRequestHeaders.Accept.Clear();
         httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-        httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/xml"));
+        httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/xml", 0.9));
 
         var response = await httpClient.GetAsync("api/movies");
         response.EnsureSuccessStatusCode();
