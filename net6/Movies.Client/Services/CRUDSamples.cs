@@ -126,6 +126,8 @@ public class CRUDSamples : IIntegrationService
         var request = new HttpRequestMessage(HttpMethod.Put,
             "api/movies/5b1c2b4d-48c7-402a-80c3-cc796ad49c6b");
         request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+        request.Content = new StringContent(serializedMovieToUpdate);
+        request.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
 
         var response = await httpClient.SendAsync(request);
         response.EnsureSuccessStatusCode();
