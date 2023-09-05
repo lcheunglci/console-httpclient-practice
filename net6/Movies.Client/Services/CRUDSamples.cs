@@ -1,6 +1,7 @@
 ﻿using Movies.Client.Helpers;
 using Movies.Client.Models;
 using System.Net.Http.Headers;
+using System.Text;
 using System.Text.Json;
 using System.Xml.Serialization;
 
@@ -88,16 +89,21 @@ public class CRUDSamples : IIntegrationService
             Genre = "Crime, Drama"
         };
 
-        var serializedMovieToCreate = JsonSerializer.Serialize(movieToCreate,
-            _jsonSerializerOptionsWrapper.Options);
+        //var serializedMovieToCreate = JsonSerializer.Serialize(movieToCreate,
+        //    _jsonSerializerOptionsWrapper.Options);
 
-        var request = new HttpRequestMessage(HttpMethod.Post, "api/movies");
-        request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+        //var request = new HttpRequestMessage(HttpMethod.Post, "api/movies");
+        //request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
-        request.Content = new StringContent(serializedMovieToCreate);
-        request.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+        //request.Content = new StringContent(serializedMovieToCreate);
+        //request.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
 
-        var response = await httpClient.SendAsync(request);
+        // var response = await httpClient.SendAsync(request);
+
+        var response = await httpClient.PostAsync(
+            "api/movies",
+            new StringContent(JsonSerializer.Serialize(movieToCreate, _jsonSerializerOptionsWrapper.Options), Encoding.UTF8, "application/json"));
+
         response.EnsureSuccessStatusCode();
 
         var content = await response.Content.ReadAsStringAsync();
@@ -123,13 +129,17 @@ public class CRUDSamples : IIntegrationService
 
         var serializedMovieToUpdate = JsonSerializer.Serialize(movieToUpdate, _jsonSerializerOptionsWrapper.Options);
 
-        var request = new HttpRequestMessage(HttpMethod.Put,
-            "api/movies/5b1c2b4d-48c7-402a-80c3-cc796ad49c6b");
-        request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-        request.Content = new StringContent(serializedMovieToUpdate);
-        request.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+        //var request = new HttpRequestMessage(HttpMethod.Put,
+        //    "api/movies/5b1c2b4d-48c7-402a-80c3-cc796ad49c6b");
+        //request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+        //request.Content = new StringContent(serializedMovieToUpdate);
+        //request.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
 
-        var response = await httpClient.SendAsync(request);
+
+        var response = await httpClient.PutAsync("api/movies/5b1c2b4d-48c7-402a-80c3-cc796ad49c6b",
+            new StringContent(JsonSerializer.Serialize(movieToUpdate, _jsonSerializerOptionsWrapper.Options), Encoding.UTF8, "application/json")
+            );
+
         response.EnsureSuccessStatusCode();
 
         var content = await response.Content.ReadAsStringAsync();
@@ -141,12 +151,15 @@ public class CRUDSamples : IIntegrationService
     {
         var httpClient = _httpClientFactory.CreateClient("MovieAPIClient");
 
-        var request = new HttpRequestMessage(
-            HttpMethod.Delete, "api/movies/5b1c2b4d-48c7-402a-80c3-cc796ad49c6b");
-        request.Headers.Accept.Add(
-            new MediaTypeWithQualityHeaderValue("application/json"));
+        //var request = new HttpRequestMessage(
+        //    HttpMethod.Delete, "api/movies/5b1c2b4d-48c7-402a-80c3-cc796ad49c6b");
+        //request.Headers.Accept.Add(
+        //    new MediaTypeWithQualityHeaderValue("application/json"));
 
-        var response = await httpClient.SendAsync(request);
+        // var response = await httpClient.SendAsync(request);
+
+        var response = await httpClient.DeleteAsync(
+            "api/movies/5b1c2b4d-48c7-402a-80c3-cc796ad49c6b");
 
         response.EnsureSuccessStatusCode();
 
