@@ -18,10 +18,13 @@ public class CRUDSamples : IIntegrationService
     }
 
 
-    public Task RunAsync()
+    public async Task RunAsync()
     {
-        // return GetResourceAsync();
-        return GetResourceThroughHttpRequestMessageAsync();
+        // await GetResourceAsync();
+        // await GetResourceThroughHttpRequestMessageAsync();
+        // await CreateResourceAsync();
+        // await UpdateResourceAsync();
+        await DeleteResourceAsync();
     }
 
     public async Task GetResourceAsync()
@@ -130,6 +133,23 @@ public class CRUDSamples : IIntegrationService
         var content = await response.Content.ReadAsStringAsync();
 
         var updatedMovie = JsonSerializer.Deserialize<Movie>(content, _jsonSerializerOptionsWrapper.Options);
+    }
+
+    public async Task DeleteResourceAsync()
+    {
+        var httpClient = _httpClientFactory.CreateClient("MovieAPIClient");
+
+        var request = new HttpRequestMessage(
+            HttpMethod.Delete, "api/movies/5b1c2b4d-48c7-402a-80c3-cc796ad49c6b");
+        request.Headers.Accept.Add(
+            new MediaTypeWithQualityHeaderValue("application/json"));
+
+        var response = await httpClient.SendAsync(request);
+
+        response.EnsureSuccessStatusCode();
+
+        var content = await response.Content.ReadAsStringAsync();
+
     }
 
 
