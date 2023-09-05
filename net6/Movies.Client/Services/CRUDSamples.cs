@@ -104,4 +104,33 @@ public class CRUDSamples : IIntegrationService
 
         //httpClient.PostAsync();
     }
+
+    public async Task UpdateResourceAsync()
+    {
+        var httpClient = _httpClientFactory.CreateClient("MoviesAPIClient");
+
+        var movieToUpdate = new MovieForUpdate()
+        {
+            Title = "Pulp Fiction",
+            Description = "The movie with Zed.",
+            DirectorId = Guid.Parse("d28888e9-2ba9-437a-a40f-e38cb54f9b35"),
+            ReleaseDate = new DateTimeOffset(new DateTime(1992, 9, 2)),
+            Genre = "Crime, Drama"
+        };
+
+        var serializedMovieToUpdate = JsonSerializer.Serialize(movieToUpdate, _jsonSerializerOptionsWrapper.Options);
+
+        var request = new HttpRequestMessage(HttpMethod.Put,
+            "api/movies/5b1c2b4d-48c7-402a-80c3-cc796ad49c6b");
+        request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+        var response = await httpClient.SendAsync(request);
+        response.EnsureSuccessStatusCode();
+
+        var content = await response.Content.ReadAsStringAsync();
+
+        var updatedMovie = JsonSerializer.Deserialize<Movie>(content, _jsonSerializerOptionsWrapper.Options);
+    }
+
+
 }
