@@ -25,7 +25,7 @@ using IHost host = Host.CreateDefaultBuilder(args)
         // services.AddScoped<IIntegrationService, CompressionSamples>();
 
         // For the CRUD samples
-        //services.AddScoped<IIntegrationService, CRUDSamples>();
+        // services.AddScoped<IIntegrationService, CRUDSamples>();
 
         // For the compression samples
         // services.AddScoped<IIntegrationService, CompressionSamples>();
@@ -37,7 +37,7 @@ using IHost host = Host.CreateDefaultBuilder(args)
         // services.AddScoped<IIntegrationService, FaultsAndErrorsSamples>();
 
         // For the HttpClientFactory samples
-        // services.AddScoped<IIntegrationService, HttpClientFactorySamples>();
+        services.AddScoped<IIntegrationService, HttpClientFactorySamples>();
 
         // For the local streams samples
         // services.AddScoped<IIntegrationService, LocalStreamsSamples>();
