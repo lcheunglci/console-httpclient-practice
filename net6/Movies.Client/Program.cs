@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Movies.Client;
 using Movies.Client.Helpers;
 using Movies.Client.Services; 
 
@@ -22,6 +23,12 @@ using IHost host = Host.CreateDefaultBuilder(args)
             var handler = new SocketsHttpHandler();
             // handler.AllowAutoRedirect = false;
             return handler;
+        });
+
+        services.AddHttpClient<MoviesAPIClient>(configureClient =>
+        {
+            configureClient.BaseAddress = new Uri("http://localhost:5001");
+            configureClient.Timeout = new TimeSpan(0, 0, 30);
         });
 
         // For the cancellation samples
