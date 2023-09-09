@@ -16,6 +16,12 @@ using IHost host = Host.CreateDefaultBuilder(args)
         {
             configureClient.BaseAddress = new Uri("http://localhost:5001");
             configureClient.Timeout = new TimeSpan(0, 0, 30);
+        })
+        .ConfigurePrimaryHttpMessageHandler(() =>
+        {
+            var handler = new SocketsHttpHandler();
+            // handler.AllowAutoRedirect = false;
+            return handler;
         });
 
         // For the cancellation samples
