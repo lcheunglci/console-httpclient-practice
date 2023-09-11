@@ -50,13 +50,13 @@ using IHost host = Host.CreateDefaultBuilder(args)
         // services.AddScoped<IIntegrationService, FaultsAndErrorsSamples>();
 
         // For the HttpClientFactory samples
-        services.AddScoped<IIntegrationService, HttpClientFactorySamples>();
+        // services.AddScoped<IIntegrationService, HttpClientFactorySamples>();
 
         // For the local streams samples
-        // services.AddScoped<IIntegrationService, LocalStreamsSamples>();
+        services.AddScoped<IIntegrationService, LocalStreamsSamples>();
 
         // For the partial update samples
-         services.AddScoped<IIntegrationService, PartialUpdateSamples>();
+        // services.AddScoped<IIntegrationService, PartialUpdateSamples>();
 
         // For the remote streaming samples
         // services.AddScoped<IIntegrationService, RemoteStreamingSamples>();
