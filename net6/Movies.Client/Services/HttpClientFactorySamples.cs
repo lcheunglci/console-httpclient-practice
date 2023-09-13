@@ -23,7 +23,8 @@ public class HttpClientFactorySamples : IIntegrationService
         // await TestDisposeHttpClientAsync();
         // await TestReuseDisposeHttpClientAsync();
         // await GetFilmsAsync();
-        await GetMoviesWithTypedHttpClientAsync();
+        // await GetMoviesWithTypedHttpClientAsync();
+        await GetMoviesViaMoviesAPIClientAsync();
     }
 
     private async Task TestDisposeHttpClientAsync()
@@ -96,7 +97,7 @@ public class HttpClientFactorySamples : IIntegrationService
     //    var movies = JsonSerializer.Deserialize<IEnumerable<Movie>>(content, _jsonSerializerOptionsWrapper.Options);
     //}
 
-    private async Task GetMoviesBiaMoviesAPIClientAsync()
+    private async Task GetMoviesViaMoviesAPIClientAsync()
     {
         var movies = await _movieAPIClient.GetMoviesAsync();
     }
