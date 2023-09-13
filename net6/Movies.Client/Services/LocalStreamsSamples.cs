@@ -27,7 +27,11 @@ public class LocalStreamsSamples : IIntegrationService
         //await TestMethodAsync(() => GetPosterWithStreamAndCompletionModeAsync());
 
         // await PostPosterWithStreamAsync();
-        await PostAndReadPosterWithStreamAsync();
+        // await PostAndReadPosterWithStreamAsync();
+
+        await TestMethodAsync(() => PostPosterWithoutStreamAsync());
+        await TestMethodAsync(() => PostPosterWithStreamAsync());
+        await TestMethodAsync(() => PostAndReadPosterWithStreamAsync());
     }
 
     private async Task GetPosterWithStreamAsync()
@@ -188,6 +192,46 @@ public class LocalStreamsSamples : IIntegrationService
 
         }
 
+
+    }
+
+
+    private async Task PostPosterWithoutStreamAsync()
+    {
+        var httpClient = _httpClientFactory.CreateClient("MoviesAPIClient");
+
+        // generate a movie poster of 5MB
+        var random = new Random();
+        var generatedBytes = new byte[5242880];
+        random.NextBytes(generatedBytes);
+
+        var posterForCreation = new PosterForCreation()
+        {
+            Name = "A new poster for The Big Lebowski",
+            Bytes = generatedBytes
+        };
+
+        var serializedPosterToCreate = JsonSerializer.Serialize(posterForCreation, _jsonSerializerOptionsWrapper.Options);
+
+
+
+        var request = new HttpRequestMessage(
+            HttpMethod.Post,
+            "api/movies/d8663e5e-7494-4f81-8739-6e0de1bea7ee/posters/"));
+
+        request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+        request.Content = new StringContent(serializedPosterToCreate);
+        request.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+
+        var response = await httpClient.SendAsync(request);
+        response.EnsureSuccessStatusCode();
+
+        var content = await response.Content.ReadAsStringAsync();
+        var poster = JsonSerializer.Deserialize<Poster>(content,
+            _jsonSerializerOptionsWrapper.Options);
+
+        // do something with the newly created poster
 
     }
 
