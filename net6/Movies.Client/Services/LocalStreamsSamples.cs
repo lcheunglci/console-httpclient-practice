@@ -213,11 +213,9 @@ public class LocalStreamsSamples : IIntegrationService
 
         var serializedPosterToCreate = JsonSerializer.Serialize(posterForCreation, _jsonSerializerOptionsWrapper.Options);
 
-
-
         var request = new HttpRequestMessage(
             HttpMethod.Post,
-            "api/movies/d8663e5e-7494-4f81-8739-6e0de1bea7ee/posters/"));
+            "api/movies/d8663e5e-7494-4f81-8739-6e0de1bea7ee/posters/");
 
         request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
