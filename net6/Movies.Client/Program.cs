@@ -21,6 +21,7 @@ using IHost host = Host.CreateDefaultBuilder(args)
         .ConfigurePrimaryHttpMessageHandler(() =>
         {
             var handler = new SocketsHttpHandler();
+            handler.AutomaticDecompression = System.Net.DecompressionMethods.GZip;
             // handler.AllowAutoRedirect = false;
             return handler;
         });
@@ -41,7 +42,7 @@ using IHost host = Host.CreateDefaultBuilder(args)
         // services.AddScoped<IIntegrationService, CRUDSamples>();
 
         // For the compression samples
-        // services.AddScoped<IIntegrationService, CompressionSamples>();
+        services.AddScoped<IIntegrationService, CompressionSamples>();
 
         // For the custom message handler samples
         // services.AddScoped<IIntegrationService, CustomMessageHandlersSamples>();
@@ -59,7 +60,7 @@ using IHost host = Host.CreateDefaultBuilder(args)
         // services.AddScoped<IIntegrationService, PartialUpdateSamples>();
 
         // For the remote streaming samples
-        services.AddScoped<IIntegrationService, RemoteStreamingSamples>();
+        // services.AddScoped<IIntegrationService, RemoteStreamingSamples>();
 
     }).Build();
 
