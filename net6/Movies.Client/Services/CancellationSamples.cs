@@ -34,15 +34,22 @@ public class CancellationSamples : IIntegrationService
         request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
         request.Headers.AcceptEncoding.Add(new StringWithQualityHeaderValue("gzip"));
 
-        using (var response = await httpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead,
-            cancellationToken))
+        try
         {
-            response.EnsureSuccessStatusCode();
+            using (var response = await httpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead,
+                cancellationToken))
+            {
+                response.EnsureSuccessStatusCode();
 
-            var stream = await response.Content.ReadAsStreamAsync();
-            var poster = await JsonSerializer.DeserializeAsync<Trailer>(
-                stream,
-                _jsonSerializerOptionsWrapper.Options);
+                var stream = await response.Content.ReadAsStreamAsync();
+                var poster = await JsonSerializer.DeserializeAsync<Trailer>(
+                    stream,
+                    _jsonSerializerOptionsWrapper.Options);
+            }
+        }
+        catch (OperationCanceledException ocException) {
+            Console.WriteLine($"An operation was canceled with message {ocException.Message}.");
+            // additional cleanup, ...
         }
     }
 }
