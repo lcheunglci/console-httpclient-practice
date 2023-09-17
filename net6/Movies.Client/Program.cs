@@ -29,7 +29,7 @@ using IHost host = Host.CreateDefaultBuilder(args)
         services.AddHttpClient<MoviesAPIClient>(configureClient =>
         {
             configureClient.BaseAddress = new Uri("http://localhost:5001");
-            configureClient.Timeout = new TimeSpan(0, 0, 30);
+            configureClient.Timeout = new TimeSpan(0, 0, 0, 0, 200);
         });
 
         // For the cancellation samples
