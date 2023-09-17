@@ -2,6 +2,7 @@
 using Movies.Client.Models;
 using System.Net.Http.Headers;
 using System.Text.Json;
+using System.Threading;
 
 namespace Movies.Client.Services;
 
@@ -9,6 +10,7 @@ public class CancellationSamples : IIntegrationService
 {
     private readonly IHttpClientFactory _httpClientFactory;
     private readonly JsonSerializerOptionsWrapper _jsonSerializerOptionsWrapper;
+    private readonly CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
 
     public CancellationSamples(IHttpClientFactory httpClientFactory, JsonSerializerOptionsWrapper jsonSerializerOptionsWrapper)
     {
@@ -18,10 +20,11 @@ public class CancellationSamples : IIntegrationService
 
     public async Task RunAsync()
     {
-        await GetTrailerAndCancelAsync();
+        _cancellationTokenSource.CancelAfter(200);
+        await GetTrailerAndCancelAsync(_cancellationTokenSource.Token);
     }
 
-    private async Task GetTrailerAndCancelAsync()
+    private async Task GetTrailerAndCancelAsync(CancellationToken cancellationToken)
     {
         var httpClient = _httpClientFactory.CreateClient("MoviesAPIClient");
 
@@ -31,11 +34,8 @@ public class CancellationSamples : IIntegrationService
         request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
         request.Headers.AcceptEncoding.Add(new StringWithQualityHeaderValue("gzip"));
 
-        var cancellationTokenSource = new CancellationTokenSource();
-        cancellationTokenSource.CancelAfter(200);
-
         using (var response = await httpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead,
-            cancellationTokenSource.Token))
+            cancellationToken))
         {
             response.EnsureSuccessStatusCode();
 
