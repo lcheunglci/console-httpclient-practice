@@ -33,16 +33,13 @@ using IHost host = Host.CreateDefaultBuilder(args)
         });
 
         // For the cancellation samples
-        // services.AddScoped<IIntegrationService, CancellationSamples>();
-
-        // For the compression samples
-        // services.AddScoped<IIntegrationService, CompressionSamples>();
+        services.AddScoped<IIntegrationService, CancellationSamples>();
 
         // For the CRUD samples
         // services.AddScoped<IIntegrationService, CRUDSamples>();
 
         // For the compression samples
-        services.AddScoped<IIntegrationService, CompressionSamples>();
+        // services.AddScoped<IIntegrationService, CompressionSamples>();
 
         // For the custom message handler samples
         // services.AddScoped<IIntegrationService, CustomMessageHandlersSamples>();
