@@ -1,5 +1,6 @@
 ﻿using Movies.Client.Helpers;
 using Movies.Client.Models;
+using System.Net;
 using System.Net.Http.Headers;
 using System.Text.Json;
 
@@ -32,7 +33,24 @@ public class FaultsAndErrorsSamples : IIntegrationService
 
         using (var response = await httpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead, cancellationToken))
         {
-            response.EnsureSuccessStatusCode();
+            if (!response.IsSuccessStatusCode)
+            {
+                // inspect the status code
+                if (response.StatusCode == HttpStatusCode.NotFound)
+                {
+                    // show this to the user
+                    Console.WriteLine("The request movie cannot be found.");
+                    return;
+                }
+                else if (response.StatusCode == HttpStatusCode.Unauthorized)
+                {
+                    // trigger a login flow
+                    return;
+                }
+
+                // not using a try catch here has more overhead, this way is safer
+                response.EnsureSuccessStatusCode();
+            }
 
             var stream = await response.Content.ReadAsStreamAsync();
             var poster = await JsonSerializer.DeserializeAsync<Movie>(
