@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Movies.Client;
+using Movies.Client.Handlers;
 using Movies.Client.Helpers;
 using Movies.Client.Services;
 using Polly;
@@ -13,6 +14,24 @@ using IHost host = Host.CreateDefaultBuilder(args)
         services.AddLogging(configure => configure.AddDebug().AddConsole());
 
         services.AddSingleton<JsonSerializerOptionsWrapper>();
+
+        services.AddHttpClient("MoviesAPIClientWithCustomerHandler", configureClient =>
+        {
+            configureClient.BaseAddress = new Uri("http://localhost:5001");
+            configureClient.Timeout = new TimeSpan(0, 0, 30);
+        })
+        .AddHttpMessageHandler<RetryPolicyDelegatingHandler>()
+        //.AddHttpMessageHandler(() =>
+        //{
+        //    return new RetryPolicyDelegatingHandler(2);
+        //})
+        .ConfigurePrimaryHttpMessageHandler(() =>
+        {
+            var handler = new SocketsHttpHandler();
+            handler.AutomaticDecompression = System.Net.DecompressionMethods.GZip;
+            // handler.AllowAutoRedirect = false;
+            return handler;
+        });
 
         services.AddHttpClient("MoviesAPIClient", configureClient =>
         {
@@ -46,10 +65,10 @@ using IHost host = Host.CreateDefaultBuilder(args)
         // services.AddScoped<IIntegrationService, CompressionSamples>();
 
         // For the custom message handler samples
-        // services.AddScoped<IIntegrationService, CustomMessageHandlersSamples>();
+        services.AddScoped<IIntegrationService, CustomMessageHandlersSamples>();
 
         // For the faults and errors samples
-        services.AddScoped<IIntegrationService, FaultsAndErrorsSamples>();
+        // services.AddScoped<IIntegrationService, FaultsAndErrorsSamples>();
 
         // For the HttpClientFactory samples
         // services.AddScoped<IIntegrationService, HttpClientFactorySamples>();
