@@ -20,6 +20,7 @@ public class FaultsAndErrorsSamples : IIntegrationService
     public async Task RunAsync()
     {
         await GetMovieAndDealWithInvalidResponseAsync(CancellationToken.None);
+        // await PostMovieAndHandleError(CancellationToken.None);
     }
 
     private async Task GetMovieAndDealWithInvalidResponseAsync(CancellationToken cancellationToken)
