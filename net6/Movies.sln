@@ -9,7 +9,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "01 - Client", "01 - Client"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "02 - Server", "02 - Server", "{EED9B125-54EB-4C0F-AB0D-507B09E2F220}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Movies.Client", "Movies.Client\Movies.Client.csproj", "{9C97614C-AD56-45B8-8E5F-3ABEAB36A6E0}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "03 - Unit Tests", "03 - Unit Tests", "{FFEBF34A-9A11-410C-893B-2A533957C9AC}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Movies.Client", "Movies.Client\Movies.Client.csproj", "{9C97614C-AD56-45B8-8E5F-3ABEAB36A6E0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Movies.Tests", "Movies.Tests\Movies.Tests.csproj", "{2B34F34B-2FAE-409B-B01E-B92A8AA1380A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -25,6 +29,10 @@ Global
 		{9C97614C-AD56-45B8-8E5F-3ABEAB36A6E0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9C97614C-AD56-45B8-8E5F-3ABEAB36A6E0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9C97614C-AD56-45B8-8E5F-3ABEAB36A6E0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2B34F34B-2FAE-409B-B01E-B92A8AA1380A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2B34F34B-2FAE-409B-B01E-B92A8AA1380A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2B34F34B-2FAE-409B-B01E-B92A8AA1380A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2B34F34B-2FAE-409B-B01E-B92A8AA1380A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -32,6 +40,7 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{DB2E81EB-634D-4288-A27A-E6AFEAC9046E} = {EED9B125-54EB-4C0F-AB0D-507B09E2F220}
 		{9C97614C-AD56-45B8-8E5F-3ABEAB36A6E0} = {0115C779-EBF1-491D-BD29-E68E538A1830}
+		{2B34F34B-2FAE-409B-B01E-B92A8AA1380A} = {FFEBF34A-9A11-410C-893B-2A533957C9AC}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {49B98022-5AAA-43D7-A13D-33A45D4CC577}
